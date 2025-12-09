@@ -1,0 +1,57 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.whl
+
+# Environment and tooling
+.env
+.venv
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.cache/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs
+*.log
+*.out
+*.err
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# LaTeX build artifacts (presentation)
+presentation/_minted-slides/
+presentation/*.aux
+presentation/*.fdb_latexmk
+presentation/*.fls
+presentation/*.lof
+presentation/*.lot
+presentation/*.nav
+presentation/*.out
+presentation/*.pdf
+presentation/*.snm
+presentation/*.synctex.gz
+presentation/*.toc
+presentation/*.vrb
+presentation/texput.log
+
