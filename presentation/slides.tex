@@ -1,0 +1,176 @@
+\documentclass{beamer}
+
+\usetheme{Madrid}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{physics}
+\usepackage{graphicx}
+
+\title[PVQD]{Projected Variational Quantum Dynamics (PVQD)}
+\subtitle{Conceito, Formulação e Implementação em Código}
+\author{}
+\institute{}
+\date{}
+
+\begin{document}
+
+%------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+%------------------------------------------
+
+%------------------------------------------
+\section{Motivação}
+%------------------------------------------
+
+\begin{frame}{Motivação}
+  \begin{itemize}
+    \item Simular evolução temporal quântica é computacionalmente difícil.
+    \item Dispositivos NISQ não suportam circuitos profundos.
+    \item É necessário um método variacional eficiente.
+    \item PVQD projeta a evolução real dentro de um subespaço variacional acessível.
+  \end{itemize}
+\end{frame}
+
+%------------------------------------------
+\section{PVQD — Ideia Geral}
+%------------------------------------------
+
+\begin{frame}{Evolução Temporal}
+  \[
+    \ket{\psi(t+\Delta t)} = e^{-iH\Delta t}\ket{\psi(t)}
+  \]
+  \vspace{0.5cm}
+  \begin{itemize}
+    \item Evolução real é difícil de implementar diretamente.
+    \item PVQD aproxima essa evolução usando um ansatz parametrizado.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Estado Variacional}
+  \[
+    \ket{\psi(\theta(t))}
+  \]
+  \begin{itemize}
+    \item O ansatz determina os graus de liberdade acessíveis.
+    \item A cada passo, ajustamos \(\theta\) para seguir a dinâmica real.
+  \end{itemize}
+\end{frame}
+
+%------------------------------------------
+\section{Formulação}
+%------------------------------------------
+
+\begin{frame}{Equações do PVQD}
+  \[
+    M \dot{\theta} = C
+  \]
+  \begin{itemize}
+    \item Sistema linear que define a atualização dos parâmetros.
+    \item Obtido pela projeção variacional da evolução temporal.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Componentes}
+  \[
+    M_{ij} = \Re(\braket{\partial_i\psi | \partial_j\psi}), \qquad
+    C_i   = \Im(\matrixel{\partial_i\psi}{H}{\psi})
+  \]
+  \begin{itemize}
+    \item \(M\): geometria do espaço variacional.
+    \item \(C\): efeito do Hamiltoniano na direção variacional.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Atualização Variacional}
+  \[
+    \dot{\theta} = M^{-1}C
+  \]
+  \[
+    \theta(t+\Delta t) = \theta(t) + \Delta t \,\dot{\theta}
+  \]
+  \begin{itemize}
+    \item Evolução discreta dos parâmetros.
+  \end{itemize}
+\end{frame}
+
+%------------------------------------------
+\section{Arquitetura do Código}
+%------------------------------------------
+
+\begin{frame}{Arquitetura Geral}
+  \begin{itemize}
+    \item \texttt{config.py} — parâmetros da simulação.
+    \item \texttt{hamiltonian.py} — definição do Hamiltoniano.
+    \item \texttt{circuit.py} — ansatz variacional.
+    \item \texttt{pvqd\_solver.py} — implementação do PVQD.
+    \item \texttt{main.py} — pipeline completo.
+    \item \texttt{results.py} — análises e gráficos.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{config.py}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{code_images/config.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{hamiltonian.py}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{code_images/hamiltonian.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{circuit.py — Ansatz}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{code_images/circuit.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{pvqd\_solver.py}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{code_images/pvqd_solver.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{main.py}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{code_images/main.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{results.py}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{code_images/results.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Outros módulos}
+  \begin{center}
+    \includegraphics[width=.8\linewidth]{code_images/primitives.png}\\[0.4cm]
+    \includegraphics[width=.8\linewidth]{code_images/ibm_backend.png}
+  \end{center}
+\end{frame}
+
+%------------------------------------------
+\section{Conclusão}
+%------------------------------------------
+
+\begin{frame}{Conclusões}
+  \begin{itemize}
+    \item PVQD é adequado para simulações em hardware NISQ.
+    \item Projeta a evolução temporal real no espaço variacional.
+    \item Código implementa toda a cadeia: Hamiltoniano, ansatz, solver e análise.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \centering
+  \Large Obrigado!
+\end{frame}
+
+\end{document}
