@@ -1,0 +1,96 @@
+\documentclass{article}
+
+% ----------------- TAMANHO DO BANNER -----------------
+% 0,90 m de largura x 1,20 m de altura (requisitos FEBIC)
+\usepackage[
+  paperwidth=90cm,
+  paperheight=120cm,
+  left=2cm,
+  right=2cm,
+  top=2cm,
+  bottom=2cm
+]{geometry}
+
+% ----------------- PACOTES GRÁFICOS ------------------
+\usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{helvet}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+
+% Fonte sem serifa (estilo de banner)
+\renewcommand{\familydefault}{\sfdefault}
+
+% ----------------- TAMANHOS DE FONTE -----------------
+% Texto principal ~30 pt (como sugerido nas orientações)
+\renewcommand\normalsize{\fontsize{30pt}{36pt}\selectfont}
+\newcommand{\TitleFont}{\fontsize{60pt}{72pt}\selectfont}
+\newcommand{\AuthorFont}{\fontsize{40pt}{48pt}\selectfont}
+\newcommand{\RefFont}{\fontsize{20pt}{24pt}\selectfont}
+
+% Espaçamento de linhas
+\onehalfspacing
+
+% ----------------- ESTILO DE SEÇÃO --------------------
+\titleformat{\section}
+  {\bfseries\uppercase}
+  {}
+  {0pt}
+  {}
+
+% ----------------- CONFIGURAÇÃO DO LISTINGS (CÓDIGO) --
+\lstdefinestyle{pythonbanner}{
+  language=Python,
+  basicstyle=\fontsize{22pt}{26pt}\ttfamily,
+  keywordstyle=\bfseries,
+  showstringspaces=false,
+  frame=single,
+  breaklines=true
+}
+
+% ----------------- CONFIGURAÇÃO DAS CAIXAS ------------
+\tcbset{
+  colframe=black,
+  colback=white,
+  boxrule=1pt,
+  arc=5pt,
+  left=6pt,
+  right=6pt,
+  top=6pt,
+  bottom=6pt
+}
+
+% ------------------------------------------------------
+\begin{document}
+\thispagestyle{empty}
+
+% ======================================================
+%             FAIXA SUPERIOR: LOGOS + TÍTULO
+% ======================================================
+\noindent
+\begin{minipage}[c]{0.18\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/uninassau.png}\\[0.5cm]
+\end{minipage}
+\begin{minipage}[c]{0.64\linewidth}
+  \centering
+  {\TitleFont\textbf{PROJEÇÃO VARIACIONAL DA DINÂMICA QUÂNTICA (PVQD)\\
+  APLICADA AO MODELO DE ISING EM 2 QUBITS}}\\[0.8cm]
+  {\AuthorFont
+    SOBRENOME, Nome do Autor$^{1}$; SOBRENOME, Nome do Coautor$^{1}$\\[0.2cm]
+    \normalsize $^{1}$Curso / Departamento – NOME DA INSTITUIÇÃO\\[0.2cm]
+    Orientador(a): SOBRENOME, Nome do(a) Orientador(a)
+  }
+\end{minipage}
+
+\vspace{0.5cm}
+\hrule height 2pt
+\vspace{0.5cm}
+
+
+\end{document}
