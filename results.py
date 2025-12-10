@@ -14,7 +14,7 @@ class ResultsProcessor:
         print(f"Fidelities: {result.fidelities}")
         
         print("\nObservables per timestep [<H>, <ZZ>]:")
-        for t, obs in zip(result.times, result.observables):
+        for t, obs in zip(result.times, result  .observables):
             print(f"t = {t:.3f}:  <H> = {obs[0]: .6f}, <ZZ> = {obs[1]: .6f}")
         
         evolved_state = result.evolved_state

@@ -16,7 +16,7 @@ def main():
     )
 
     hamiltonian = create_ising_hamiltonian(config)
-    zz_observable = create_zz_observable()
+    zz_observable = create_zz_observable(config)
 
     ansatz = create_ansatz(config)
     print(f"Ansatz: {ansatz.num_parameters} parameters on {ansatz.num_qubits} qubits")
