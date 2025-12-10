@@ -55,3 +55,12 @@ presentation/*.toc
 presentation/*.vrb
 presentation/texput.log
 
+# LaTeX build artifacts (banner)
+banner/*.aux
+banner/*.fdb_latexmk
+banner/*.fls
+banner/*.log
+banner/*.out
+banner/*.synctex.gz
+banner/texput.log
+banner/*.pdf
