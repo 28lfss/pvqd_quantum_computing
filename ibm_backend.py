@@ -26,7 +26,7 @@ def setup_ibm_backend() -> Tuple[IBMEstimator, object]:
     backend = service.least_busy(
         operational=True,
         simulator=False,
-        min_num_qubits=3,
+        min_num_qubits=5,
     )
     ibm_estimator = IBMEstimator(mode=backend)
     return ibm_estimator, backend
