@@ -1,292 +1,191 @@
 \documentclass{beamer}
 
+% Theme
 \usetheme{Madrid}
+\usecolortheme{beaver}
 
+% Packages
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[brazil]{babel}
-\usepackage{graphicx}
-\usepackage{adjustbox}
 \usepackage{amsmath}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{braket}
 
-\title[PVQD]{Projected Variational Quantum Dynamics}
-\subtitle{Fundamentos Teóricos e Implementação}
-\author{}
-\institute{}
-\date{}
+\title[PVQD]{Projected Variational Quantum Dynamics (PVQD)}
+\subtitle{Simulação Variacional da Dinâmica Quântica}
+\author{Seu Nome}
+\institute{UFPE}
+\date{\today}
 
 \begin{document}
 
-%------------------------------------------
+% ---------------------------------------------------------
 \begin{frame}
-  \titlepage
+    \titlepage
 \end{frame}
-%------------------------------------------
 
-%------------------------------------------
-\section{Motivação}
-%------------------------------------------
-
-\begin{frame}{Por que estudar dinâmica quântica?}
-  \begin{itemize}
-    \item A evolução temporal de sistemas quânticos é relevante para:
+% ---------------------------------------------------------
+\begin{frame}{Motivação}
     \begin{itemize}
-      \item química quântica,
-      \item materiais,
-      \item informação quântica,
-      \item simulação de modelos físicos.
+        \item Simular a dinâmica de sistemas quânticos é computacionalmente caro.
+        \item O espaço de Hilbert cresce exponencialmente: $2^n$ estados para $n$ qubits.
+        \item Métodos variacionais permitem simular a evolução temporal em hardware NISQ.
+        \item O PVQD surge como proposta eficiente e estável para evoluções dependentes do tempo.
     \end{itemize}
-    \item Computar essa evolução é difícil devido ao crescimento exponencial do espaço de estados.
-    \item Métodos tradicionais exigem recursos inacessíveis para sistemas grandes.
-  \end{itemize}
 \end{frame}
 
-\begin{frame}{Limitações dos dispositivos NISQ}
-  \begin{itemize}
-    \item Hardware atual possui:
+% ---------------------------------------------------------
+\begin{frame}{Ideia Central do PVQD}
     \begin{itemize}
-      \item ruído,
-      \item decoerência,
-      \item número limitado de qubits,
-      \item profundidade de circuito restrita.
+        \item Aproximar a evolução da Equação de Schrödinger projetando-a sobre um espaço variacional.
+        \item Utiliza um ansatz parametrizado $ \ket{\psi(\theta(t))} $.
+        \item A dinâmica é obtida ponto a ponto, ajustando $\theta(t)$.
+        \item Mais estável que VQS tradicional.
     \end{itemize}
-    \item Precisamos de algoritmos:
+\end{frame}
+
+% ---------------------------------------------------------
+\begin{frame}{Equação de Schrödinger}
+    \[
+        i \frac{d}{dt} \ket{\psi(t)} = H \ket{\psi(t)}
+    \]
+    \vspace{1em}
     \begin{itemize}
-      \item rasos,
-      \item robustos ao ruído,
-      \item variacionais.
+        \item Objetivo: aproximar a evolução sem calcular todo o vetor de estado.
+        \item O PVQD transforma esse problema em equações diferenciais nos parâmetros do circuito.
     \end{itemize}
-  \end{itemize}
 \end{frame}
 
-%------------------------------------------
-\section{Ideia geral do PVQD}
-%------------------------------------------
-
-\begin{frame}{O que é o PVQD?}
-  \begin{itemize}
-    \item Método variacional para aproximar a dinâmica de sistemas quânticos.
-    \item Baseado na projeção da evolução física real em um subespaço acessível.
-    \item Usa um ansatz parametrizado para representar o estado quântico.
-    \item Atualiza parâmetros ao longo do tempo para seguir a dinâmica.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ideia conceitual}
-  \begin{itemize}
-    \item A evolução real vive em todo o espaço de Hilbert.
-    \item O ansatz vive em um subespaço parametrizado.
-    \item PVQD: \textbf{projetar} a evolução ideal dentro do espaço variacional.
-    \item Mantém a trajetória física enquanto respeita limitações do hardware.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Por que projeção variacional funciona?}
-  \begin{itemize}
-    \item Baseia-se no princípio de McLachlan:
+% ---------------------------------------------------------
+\begin{frame}{Ansatz Variacional}
     \begin{itemize}
-      \item a melhor aproximação é aquela que minimiza a distância entre a evolução real e a variacional.
+        \item Ansatz: circuito quântico parametrizado.
+        \item Define o subespaço acessível ao método.
+        \item Exemplos:
+        \begin{itemize}
+            \item Hardware-Efficient Ansatz
+            \item Ansatz inspirado no Hamiltoniano (QAOA-like)
+        \end{itemize}
+        \item Limitação: O método só evolui dentro do espaço gerado pelo ansatz.
     \end{itemize}
-    \item Permite capturar dinâmicas relevantes com poucos parâmetros.
-    \item Elimina necessidade de implementar operadores de evolução profundos.
-  \end{itemize}
 \end{frame}
 
-%------------------------------------------
-\section{Formulação conceitual}
-%------------------------------------------
-
-\begin{frame}{Componentes principais do método}
-  \begin{itemize}
-    \item \textbf{Ansatz variacional}: família de estados acessíveis.
-    \item \textbf{Derivadas variacionais}: como o estado muda com os parâmetros.
-    \item \textbf{Métrica geométrica}: descreve a estrutura do espaço variacional.
-    \item \textbf{Projeção da dinâmica}: aproximação da evolução temporal real.
-    \item \textbf{Atualização dos parâmetros}: trajetória variacional ao longo do tempo.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Interpretação intuitiva}
-  \begin{itemize}
-    \item O estado evolui como um ponto movendo-se em uma superfície curva.
-    \item O ansatz define uma sub-superfície mais simples.
-    \item PVQD encontra a melhor trajetória dentro dessa sub-superfície.
-    \item O método busca preservar:
+% ---------------------------------------------------------
+\begin{frame}{Projeção Variacional}
     \begin{itemize}
-      \item energia,
-      \item coerência,
-      \item estrutura geométrica.
+        \item O PVQD projeta $ \dot{\ket{\psi}} $ no espaço tangente do ansatz.
+        \item Leva ao sistema linear:
     \end{itemize}
-  \end{itemize}
-\end{frame}
-
-%------------------------------------------
-\section{Arquitetura do Código}
-%------------------------------------------
-
-\begin{frame}{Estrutura do projeto}
-  \begin{itemize}
-    \item \texttt{config.py}: parâmetros da simulação.
-    \item \texttt{hamiltonian.py}: construção do Hamiltoniano.
-    \item \texttt{circuit.py}: definição do ansatz.
-    \item \texttt{pvqd\_solver.py}: implementação do método PVQD.
-    \item \texttt{main.py}: execução da dinâmica.
-    \item \texttt{results.py}: análise de resultados.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{config.py}
-  \begin{columns}
-    \column{0.5\textwidth}
+    \[
+        M(\theta) \, \dot{\theta} = V(\theta)
+    \]
     \begin{itemize}
-      \item Define parâmetros da simulação usando \texttt{@dataclass}
-      \item Parâmetros do Hamiltoniano: força de interação (J) e campo transverso (h\_x)
-      \item Configurações de simulação: número de qubits, passos temporais, tempo total
-      \item Parâmetros do ansatz: repetições e tipo de emaranhamento
-      \item Configurações do otimizador: máximo de avaliações da função
+        \item $M$: matriz de métricas (overlaps de derivadas do estado).
+        \item $V$: termo que incorpora o Hamiltoniano.
+        \item Resolver esse sistema fornece $\dot{\theta}$.
     \end{itemize}
-    
-    \column{0.5\textwidth}
+\end{frame}
+
+% ---------------------------------------------------------
+\begin{frame}{Passo Temporal (Time-Stepping)}
+    \begin{enumerate}
+        \item Calcular $M(\theta)$ e $V(\theta)$ usando medidas quânticas.
+        \item Resolver a equação linear para $\dot{\theta}$.
+        \item Atualizar:  
+        \[
+            \theta_{t+\Delta t} = \theta_t + \dot{\theta}\Delta t
+        \]
+        \item Aplicar o circuito com novos parâmetros e repetir.
+    \end{enumerate}
+\end{frame}
+
+% ---------------------------------------------------------
+\begin{frame}{Exemplo de Hamiltoniano: Modelo de Ising}
+    \[
+        H = J\sum_i Z_i Z_{i+1} + h_x \sum_i X_i
+    \]
+    \begin{itemize}
+        \item Hamiltoniano comum para testes.
+        \item Mas o PVQD funciona com qualquer Hamiltoniano dependente ou não do tempo.
+    \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------
+\begin{frame}{Fluxo do Algoritmo PVQD}
+    \begin{enumerate}
+        \item Definir ansatz variacional.
+        \item Medir expectativas necessárias.
+        \item Resolver o sistema linear de McLachlan.
+        \item Atualizar parâmetros.
+        \item Evoluir o estado no tempo.
+    \end{enumerate}
+
+    % Espaço reservado para imagem
     \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.75\textheight,center}{\includegraphics{code_images/config.png}}
+        \includegraphics[width=0.55\textwidth]{images/ansatz_layer.png}
     \end{center}
-  \end{columns}
 \end{frame}
 
-\begin{frame}{hamiltonian.py}
-  \begin{columns}
-    \column{0.5\textwidth}
+% ---------------------------------------------------------
+\begin{frame}{Resultados Típicos}
     \begin{itemize}
-      \item Constrói o Hamiltoniano de Ising 1D: $H = J \sum_i Z_i Z_{i+1} + h_x \sum_i X_i$
-      \item Usa \texttt{SparsePauliOp} do Qiskit para representação eficiente
-      \item Implementa acoplamentos ZZ entre qubits vizinhos
-      \item Adiciona termos de campo transverso (X) em cada qubit
-      \item Define observável auxiliar para análise de resultados
+        \item Fidelidade entre evolução variacional e exata.
+        \item Energia ao longo do tempo.
+        \item Erro acumulado pequeno para $\Delta t$ moderado.
     \end{itemize}
-    
-    \column{0.5\textwidth}
+
     \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.75\textheight,center}{\includegraphics{code_images/hamiltonian.png}}
+        \includegraphics[width=0.55\textwidth]{images/ansatz_layer.png}
     \end{center}
-  \end{columns}
 \end{frame}
 
-\begin{frame}{circuit.py}
-  \begin{columns}
-    \column{0.5\textwidth}
+% ---------------------------------------------------------
+\begin{frame}{Vantagens}
     \begin{itemize}
-      \item Define o ansatz variacional usando \texttt{efficient\_su2} do Qiskit
-      \item Ansatz parametrizado com número configurável de repetições
-      \item Suporta diferentes padrões de emaranhamento (linear, circular, etc.)
-      \item Inicializa parâmetros do ansatz (zero por padrão)
-      \item Estrutura modular permite fácil troca de ansatz
+        \item Requer profundidade menor que Trotterização.
+        \item Mais estável que VQS tradicional.
+        \item Pode ser executado em hardware NISQ.
+        \item Escalabilidade moderada.
     \end{itemize}
-    
-    \column{0.5\textwidth}
-    \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.75\textheight,center}{\includegraphics{code_images/circuit.png}}
-    \end{center}
-  \end{columns}
 \end{frame}
 
-\begin{frame}{pvqd\_solver.py}
-  \begin{columns}
-    \column{0.5\textwidth}
+% ---------------------------------------------------------
+\begin{frame}{Limitações}
     \begin{itemize}
-      \item Classe principal que encapsula o solver PVQD
-      \item Configura primitivas (sampler, estimator, fidelity)
-      \item Inicializa ansatz e parâmetros iniciais
-      \item Usa otimizador L-BFGS-B para minimização variacional
-      \item Resolve problema de evolução temporal via \texttt{PVQD.evolve()}
+        \item Dependência forte da escolha do ansatz.
+        \item Muitas medições para calcular $M$ e $V$.
+        \item Possíveis barren plateaus.
+        \item Erro cresce em longas evoluções temporais.
     \end{itemize}
-    
-    \column{0.5\textwidth}
-    \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.75\textheight,center}{\includegraphics{code_images/pvqd_solver.png}}
-    \end{center}
-  \end{columns}
 \end{frame}
 
-\begin{frame}{main.py}
-  \begin{columns}
-    \column{0.5\textwidth}
+% ---------------------------------------------------------
+\begin{frame}{Aplicações}
     \begin{itemize}
-      \item Orquestra a execução completa da simulação
-      \item Cria configuração, Hamiltoniano e observáveis
-      \item Instancia o solver PVQD e executa a evolução temporal
-      \item Processa e exibe resultados (energia, observáveis, fidelidades)
-      \item Suporta integração opcional com backends IBM
+        \item Dinâmica de cadeias de spin.
+        \item Materiais quânticos.
+        \item Reações químicas.
+        \item Simulação fora do equilíbrio.
     \end{itemize}
-    
-    \column{0.5\textwidth}
-    \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.75\textheight,center}{\includegraphics{code_images/main.png}}
-    \end{center}
-  \end{columns}
 \end{frame}
 
-\begin{frame}{results.py}
-  \begin{columns}
-    \column{0.5\textwidth}
+% ---------------------------------------------------------
+\begin{frame}{Conclusão}
     \begin{itemize}
-      \item Processa e exibe resultados da simulação PVQD
-      \item Mostra parâmetros, fidelidades e observáveis por timestep
-      \item Visualiza circuito final evoluído
-      \item Recomputa valores esperados localmente para validação
-      \item Facilita análise comparativa entre timesteps
+        \item PVQD é um método promissor para simulação temporal quântica.
+        \item Combina técnicas variacionais com projeção da dinâmica exata.
+        \item Adequado para hardware NISQ.
     \end{itemize}
-    
-    \column{0.5\textwidth}
-    \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.75\textheight,center}{\includegraphics{code_images/results.png}}
-    \end{center}
-  \end{columns}
 \end{frame}
 
-\begin{frame}{Outros módulos}
-  \begin{columns}
-    \column{0.5\textwidth}
-    \textbf{primitives.py}
-    \begin{itemize}
-      \item Configura primitivas do Qiskit
-      \item StatevectorSampler e StatevectorEstimator
-      \item ComputeUncompute para cálculo de fidelidade
-    \end{itemize}
-    \vspace{0.2cm}
-    \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.35\textheight,center}{\includegraphics{code_images/primitives.png}}
-    \end{center}
-    
-    \column{0.5\textwidth}
-    \textbf{ibm\_backend.py}
-    \begin{itemize}
-      \item Integração com backends IBM Quantum
-      \item Transpilação para gates nativos
-      \item Avaliação em hardware real (opcional)
-    \end{itemize}
-    \vspace{0.2cm}
-    \begin{center}
-      \adjustbox{max width=0.48\textwidth,max height=0.35\textheight,center}{\includegraphics{code_images/ibm_backend.png}}
-    \end{center}
-  \end{columns}
+% ---------------------------------------------------------
+\begin{frame}{Referências}
+    \footnotesize{
+    Barison, S., Vicentini, F., \& Carleo, G. (2021). *Projected Variational Quantum Dynamics*. \\
+    McLachlan, A. D. (1964). *A variational solution of the time-dependent Schrödinger equation*. \\
+    Qiskit Textbook — Simulation Methods.
+    }
 \end{frame}
 
-%------------------------------------------
-\section{Conclusões}
-%------------------------------------------
-
-\begin{frame}{Conclusões}
-  \begin{itemize}
-    \item PVQD é um método eficiente para simular dinâmica em hardware NISQ.
-    \item Baseia-se em princípios variacionais e projeções geométricas.
-    \item Evita operadores profundos e é robusto ao ruído.
-    \item Implementação modular facilita testes em simulador e hardware real.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \centering
-  \Large Obrigado!
-\end{frame}
-
+% ---------------------------------------------------------
 \end{document}
