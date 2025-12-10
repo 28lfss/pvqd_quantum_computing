@@ -17,8 +17,16 @@
 \usepackage{setspace}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{colortbl}
 \usepackage{listings}
 \usepackage{amsmath}
+\usepackage{tikz}
+
+% Cores acadêmicas profissionais
+\definecolor{academicblue}{RGB}{0,51,102}
+\definecolor{lightblue}{RGB}{230,240,250}
+\definecolor{mediumgray}{RGB}{128,128,128}
+\definecolor{sectionblue}{RGB}{0,76,153}
 
 \renewcommand{\familydefault}{\sfdefault}
 
@@ -30,29 +38,38 @@
 \onehalfspacing
 
 \titleformat{\section}
-  {\bfseries\uppercase}
+  {\bfseries\Large\color{sectionblue}\uppercase}
   {}
   {0pt}
-  {}
+  {\rule[-0.3cm]{0.3cm}{0.3cm}\hspace{0.5cm}}
 
 \lstdefinestyle{pythonbanner}{
   language=Python,
-  basicstyle=\fontsize{24pt}{28pt}\ttfamily,
-  keywordstyle=\bfseries,
+  basicstyle=\fontsize{24pt}{28pt}\ttfamily\color{academicblue},
+  keywordstyle=\bfseries\color{sectionblue},
+  commentstyle=\itshape\color{mediumgray},
+  stringstyle=\color{academicblue},
   showstringspaces=false,
-  frame=single,
-  breaklines=true
+  frame=leftline,
+  framerule=3pt,
+  rulecolor=\color{academicblue},
+  breaklines=true,
+  backgroundcolor=\color{lightblue}
 }
 
+% Estilo para caixas principais
 \tcbset{
-  colframe=black,
-  colback=white,
-  boxrule=1pt,
-  arc=5pt,
-  left=6pt,
-  right=6pt,
-  top=6pt,
-  bottom=6pt
+  colframe=academicblue,
+  colback=lightblue,
+  boxrule=1.5pt,
+  arc=8pt,
+  left=10pt,
+  right=10pt,
+  top=10pt,
+  bottom=10pt,
+  fonttitle=\bfseries,
+  titlerule=0.5pt,
+  title style={fill=academicblue, text=white}
 }
 
 \begin{document}
@@ -63,19 +80,23 @@
 % ======================================================
 
 \begin{center}
-{\TitleFont \textbf{PROJEÇÃO VARIACIONAL DA DINÂMICA QUÂNTICA (PVQD)}\\}
+{\TitleFont \textcolor{academicblue}{\textbf{PROJEÇÃO VARIACIONAL DA DINÂMICA QUÂNTICA (PVQD)}}\\}
 
-\vspace{0.5cm}
+\vspace{0.8cm}
 
-{\AuthorFont Autores: Lucas Fernandes Brayner; Luiz Felipe Sá; Victor Silva Dutra}
+{\AuthorFont \textcolor{mediumgray}{Autores: Lucas Fernandes Brayner; Luiz Felipe Sá; Victor Silva Dutra}}
 
-\normalsize Ciências da Computação / Uninassau\\
-Orientador(a): Antenor Jorge Parnaíba
+\vspace{0.3cm}
+
+\normalsize \textcolor{mediumgray}{Ciências da Computação / Uninassau}\\
+\textcolor{mediumgray}{Orientador(a): Antenor Jorge Parnaíba}
 \end{center}
 
-\vspace{1cm}
-\hrule
-\vspace{1cm}
+\vspace{0.3cm}
+\begin{center}
+\color{academicblue}\rule{0.8\linewidth}{2.5pt}
+\end{center}
+\vspace{0.8cm}
 
 % ======================================================
 % DUAS COLUNAS MANUAIS COM MINIPAGE
@@ -94,8 +115,8 @@ da equação de Schr\"odinger dependente do tempo.
 \end{tcolorbox}
 
 \begin{center}
-\includegraphics[width=0.95\linewidth]{images/pvqd_geometry_flow.png}\\
-{\RefFont Esquema conceitual do método PVQD.}
+\fcolorbox{academicblue}{white}{\includegraphics[width=0.95\linewidth]{images/pvqd_geometry_flow.png}}\\[0.2cm]
+{\RefFont \textcolor{mediumgray}{Esquema conceitual do método PVQD.}}
 \end{center}
 
 \vspace{0.8cm}
@@ -171,8 +192,8 @@ e portas de interação. O fluxo do algoritmo PVQD pode ser resumido em:
 \vspace{0.4cm}
 
 \begin{center}
-\includegraphics[width=0.75\linewidth]{images/ansatz_layer.png}\\
-{\RefFont Camada do ansatz com rotações $R_X$ e acoplamento $Z Z(\theta)$.}
+\fcolorbox{academicblue}{white}{\includegraphics[width=0.75\linewidth]{images/ansatz_layer.png}}\\[0.2cm]
+{\RefFont \textcolor{mediumgray}{Camada do ansatz com rotações $R_X$ e acoplamento $Z Z(\theta)$.}}
 \end{center}
 
 \end{minipage}
@@ -230,14 +251,15 @@ def main():
 A fidelidade entre o estado variacional e o estado de referência exato
 permaneceu elevada ao longo de toda a evolução:
 \begin{center}
-\begin{tabular}{cc}
-\toprule
+\arrayrulecolor{academicblue}
+\begin{tabular}{>{\color{academicblue}}c >{\color{academicblue}}c}
+\toprule[1.5pt]
 $t$ & Fidelidade \\
-\midrule
+\midrule[0.8pt]
 0.0 & 1.0000 \\
 0.5 & 0.9990 \\
 1.0 & 0.9980 \\
-\bottomrule
+\bottomrule[1.5pt]
 \end{tabular}
 \end{center}
 O valor mínimo observado foi $\mathcal{F}_{\min} \approx 0{,}998$.
@@ -248,14 +270,15 @@ O valor mínimo observado foi $\mathcal{F}_{\min} \approx 0{,}998$.
 \begin{tcolorbox}
 \textbf{Observáveis energéticos e de correlação}\\[0.2cm]
 \begin{center}
-\begin{tabular}{ccc}
-\toprule
+\arrayrulecolor{academicblue}
+\begin{tabular}{>{\color{academicblue}}c >{\color{academicblue}}c >{\color{academicblue}}c}
+\toprule[1.5pt]
 $t$ & $\langle H\rangle$ & $\langle Z Z\rangle$ \\
-\midrule
+\midrule[0.8pt]
 0.0 & 0.500000 & 1.000000 \\
 0.5 & 0.503872 & 0.999598 \\
 1.0 & 0.507375 & 0.998441 \\
-\bottomrule
+\bottomrule[1.5pt]
 \end{tabular}
 \end{center}
 A energia varia suavemente com o tempo, enquanto a correlação
