@@ -1,7 +1,5 @@
 \documentclass{article}
 
-% ----------------- TAMANHO DO BANNER -----------------
-% 0,90 m de largura x 1,20 m de altura (requisitos FEBIC)
 \usepackage[
   paperwidth=90cm,
   paperheight=120cm,
@@ -11,10 +9,8 @@
   bottom=2cm
 ]{geometry}
 
-% ----------------- PACOTES GRÁFICOS ------------------
 \usepackage{graphicx}
 \usepackage[most]{tcolorbox}
-\usepackage{multicol}
 \usepackage{xcolor}
 \usepackage{titlesec}
 \usepackage{helvet}
@@ -22,28 +18,23 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{listings}
+\usepackage{amsmath}
 
-% Fonte sem serifa (estilo de banner)
 \renewcommand{\familydefault}{\sfdefault}
 
-% ----------------- TAMANHOS DE FONTE -----------------
-% Texto principal ~30 pt (como sugerido nas orientações)
 \renewcommand\normalsize{\fontsize{30pt}{36pt}\selectfont}
-\newcommand{\TitleFont}{\fontsize{60pt}{72pt}\selectfont}
+\newcommand{\TitleFont}{\fontsize{52pt}{62pt}\selectfont}
 \newcommand{\AuthorFont}{\fontsize{40pt}{48pt}\selectfont}
 \newcommand{\RefFont}{\fontsize{20pt}{24pt}\selectfont}
 
-% Espaçamento de linhas
 \onehalfspacing
 
-% ----------------- ESTILO DE SEÇÃO --------------------
 \titleformat{\section}
   {\bfseries\uppercase}
   {}
   {0pt}
   {}
 
-% ----------------- CONFIGURAÇÃO DO LISTINGS (CÓDIGO) --
 \lstdefinestyle{pythonbanner}{
   language=Python,
   basicstyle=\fontsize{22pt}{26pt}\ttfamily,
@@ -53,7 +44,6 @@
   breaklines=true
 }
 
-% ----------------- CONFIGURAÇÃO DAS CAIXAS ------------
 \tcbset{
   colframe=black,
   colback=white,
@@ -65,32 +55,241 @@
   bottom=6pt
 }
 
-% ------------------------------------------------------
 \begin{document}
 \thispagestyle{empty}
 
 % ======================================================
-%             FAIXA SUPERIOR: LOGOS + TÍTULO
+% CABEÇALHO
 % ======================================================
-\noindent
-\begin{minipage}[c]{0.18\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/uninassau.png}\\[0.5cm]
-\end{minipage}
-\begin{minipage}[c]{0.64\linewidth}
-  \centering
-  {\TitleFont\textbf{PROJEÇÃO VARIACIONAL DA DINÂMICA QUÂNTICA (PVQD)\\
-  APLICADA AO MODELO DE ISING EM 2 QUBITS}}\\[0.8cm]
-  {\AuthorFont
-    SOBRENOME, Nome do Autor$^{1}$; SOBRENOME, Nome do Coautor$^{1}$\\[0.2cm]
-    \normalsize $^{1}$Curso / Departamento – NOME DA INSTITUIÇÃO\\[0.2cm]
-    Orientador(a): SOBRENOME, Nome do(a) Orientador(a)
-  }
-\end{minipage}
+
+\begin{center}
+{\TitleFont \textbf{PROJEÇÃO VARIACIONAL DA DINÂMICA QUÂNTICA (PVQD)}\\}
 
 \vspace{0.5cm}
-\hrule height 2pt
-\vspace{0.5cm}
 
+{\AuthorFont Autores: Lucas Fernandes Brayner; Luiz Felipe Sá; Victor Silva Dutra}
+
+\normalsize Ciências da Computação / Uninassau\\
+Orientador(a): Antenor Jorge Parnaíba
+\end{center}
+
+\vspace{1cm}
+\hrule
+\vspace{1cm}
+
+% ======================================================
+% DUAS COLUNAS MANUAIS COM MINIPAGE
+% ======================================================
+
+\begin{minipage}[t]{0.48\linewidth}
+
+% ---------- INTRODUÇÃO ----------
+\section*{Introdução}
+
+\begin{tcolorbox}
+A Projeção Variacional da Dinâmica Quântica (PVQD) é um método híbrido
+quântico–clássico que aproxima a evolução temporal de um sistema quântico
+por meio de um \emph{ansatz} parametrizado, ajustado passo a passo a partir
+da equação de Schr\"odinger dependente do tempo.
+\end{tcolorbox}
+
+\begin{center}
+\includegraphics[width=0.95\linewidth]{images/pvqd_geometry_flow.png}\\
+{\RefFont Esquema conceitual do método PVQD.}
+\end{center}
+
+\vspace{0.8cm}
+
+% ---------- FUNDAMENTAÇÃO TEÓRICA ----------
+\section*{Fundamentação teórica}
+
+\begin{tcolorbox}
+A dinâmica de um sistema quântico fechado é descrita pela equação de
+Schr\"odinger dependente do tempo:
+\[
+  i \frac{d}{dt}\lvert \psi(t)\rangle = H \lvert \psi(t)\rangle .
+\]
+
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}
+No PVQD, o estado é restringido a uma família variacional
+$\lvert \psi(\boldsymbol{\theta}(t))\rangle$ gerada por um circuito
+\emph{ansatz}. A evolução exata é projetada nesse espaço por meio da
+minimização da norma:
+\[
+  \Big\|
+    \tfrac{d}{dt} \lvert \psi(\boldsymbol{\theta})\rangle
+    - H \lvert \psi(\boldsymbol{\theta})\rangle
+  \Big\|^2 ,
+\]
+levando a um sistema linear para $\dot{\boldsymbol{\theta}}$ em cada passo
+de tempo.
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+% ---------- OBJETIVOS ----------
+\section*{Objetivos}
+
+\begin{tcolorbox}
+\textbf{Objetivo geral}\\[0.2cm]
+Aplicar o método PVQD ao modelo de Ising em 2 qubits, avaliando sua
+capacidade de reproduzir a evolução temporal com alta fidelidade.\\[0.4cm]
+\textbf{Objetivos específicos}
+\begin{itemize}
+  \item Construir o Hamiltoniano de Ising com acoplamento $Z Z$ e
+        campo transversal $X$.
+  \item Implementar um ansatz parametrizado adequado para 2 qubits.
+  \item Simular a evolução variacional usando Qiskit em modo
+        \emph{statevector}.
+  \item Calcular fidelidade, energia $\langle H\rangle$ e correlação
+        $\langle Z Z\rangle$ ao longo do tempo.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+% ---------- METODOLOGIA ----------
+\section*{Metodologia}
+
+\begin{tcolorbox}
+O Hamiltoniano de Ising inclui acoplamentos $Z Z$ e campo transversal $X$,
+enquanto a dinâmica é aproximada por um circuito ansatz com rotações locais
+e portas de interação. O fluxo do algoritmo PVQD pode ser resumido em:
+\begin{enumerate}
+  \item Definir $H$ e o ansatz $\lvert \psi(\boldsymbol{\theta})\rangle$.
+  \item Calcular as matrizes variacionais e o vetor de forças.
+  \item Resolver o sistema linear para $\dot{\boldsymbol{\theta}}$.
+  \item Atualizar os parâmetros e avançar no tempo.
+  \item Medir observáveis de interesse em cada passo.
+\end{enumerate}
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{center}
+\includegraphics[width=0.75\linewidth]{images/ansatz_layer.png}\\
+{\RefFont Camada do ansatz com rotações $R_X$ e acoplamento $Z Z(\theta)$.}
+\end{center}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+
+% ---------- CÓDIGO ----------
+\section*{Código utilizado}
+
+\begin{tcolorbox}
+\begin{lstlisting}[style=pythonbanner]
+from config import PVQDConfig
+from hamiltonian import create_ising_hamiltonian
+from circuit import create_ansatz
+from pvqd_solver import PVQDSolver
+from results import ResultsProcessor
+
+def main():
+    config = PVQDConfig()
+    h = create_ising_hamiltonian(config)
+    ans = create_ansatz(config)
+    solver = PVQDSolver(config)
+
+    result = solver.solve(
+        hamiltonian=h,
+        aux_operators=[h]
+    )
+
+    ResultsProcessor(
+        solver.estimator
+    ).display_results(result, h)
+\end{lstlisting}
+\end{tcolorbox}
+
+\vspace{0.8cm}
+
+% ---------- RESULTADOS ----------
+\section*{Resultados}
+
+\begin{tcolorbox}
+\textbf{Parâmetros da simulação}
+\begin{itemize}
+  \item Qubits: 2
+  \item Passos de tempo: 10
+  \item Tempo total: $T = 1{,}0$
+  \item Parâmetros do ansatz: 8
+  \item Otimizador clássico com até 20 avaliações por passo.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}
+\textbf{Fidelidade}\\[0.2cm]
+A fidelidade entre o estado variacional e o estado de referência exato
+permaneceu elevada ao longo de toda a evolução:
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+$t$ & Fidelidade \\
+\midrule
+0.0 & 1.0000 \\
+0.5 & 0.9990 \\
+1.0 & 0.9980 \\
+\bottomrule
+\end{tabular}
+\end{center}
+O valor mínimo observado foi $\mathcal{F}_{\min} \approx 0{,}998$.
+\end{tcolorbox}
+
+\vspace{0.4cm}
+
+\begin{tcolorbox}
+\textbf{Observáveis energéticos e de correlação}\\[0.2cm]
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+$t$ & $\langle H\rangle$ & $\langle Z Z\rangle$ \\
+\midrule
+0.0 & 0.500000 & 1.000000 \\
+0.5 & 0.503872 & 0.999598 \\
+1.0 & 0.507375 & 0.998441 \\
+\bottomrule
+\end{tabular}
+\end{center}
+A energia varia suavemente com o tempo, enquanto a correlação
+$\langle Z Z\rangle$ permanece próxima de 1, indicando fortes
+correlações de spin entre os qubits.
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+% ---------- DISCUSSÃO ----------
+\section*{Discussão}
+
+\begin{tcolorbox}
+Os resultados indicam que um ansatz relativamente raso, com apenas 8
+parâmetros, é suficiente para capturar a dinâmica do modelo de Ising em
+2 qubits com alta fidelidade. O PVQD se mostra uma alternativa promissora a esquemas baseados em
+Trotterização, pois substitui decomposições longas de $e^{-iHt}$ por
+um problema de otimização com menor profundidade e número de portas
+entrelançadas.
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+% ---------- REFERÊNCIAS ----------
+\section*{Referências essenciais}
+
+\begin{tcolorbox}
+\RefFont
+1. A. O. Author \emph{et al.}, ``Projected Variational Quantum Dynamics'',
+   Journal X, ano.\\[0.1cm]
+2. M. Nielsen, I. Chuang, \emph{Quantum Computation and Quantum Information}.\\[0.1cm]
+3. Documentação Qiskit: \texttt{https://qiskit.org}
+\end{tcolorbox}
+
+\end{minipage}
 
 \end{document}
