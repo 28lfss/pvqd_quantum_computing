@@ -25,7 +25,7 @@ def main():
     print("Running PVQD...")
     result = solver.solve(
         hamiltonian=hamiltonian,
-        aux_operators=[hamiltonian, zz_observable],  # needed for layout handling
+        aux_operators=[hamiltonian, zz_observable],
     )
     results_processor = ResultsProcessor(solver.estimator)
     results_processor.display_results(result, hamiltonian, zz_observable)
