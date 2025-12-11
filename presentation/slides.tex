@@ -1,191 +1,222 @@
-\documentclass{beamer}
+\documentclass[10pt]{beamer}
 
-% Theme
+% Tema limpo e profissional
 \usetheme{Madrid}
-\usecolortheme{beaver}
+\usecolortheme{seahorse}
 
-% Packages
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{physics}
 \usepackage{graphicx}
-\usepackage{braket}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{listings}
+\usepackage{xcolor}
 
-\title[PVQD]{Projected Variational Quantum Dynamics (PVQD)}
-\subtitle{Simulação Variacional da Dinâmica Quântica}
-\author{Seu Nome}
-\institute{UFPE}
-\date{\today}
+% Cores personalizadas (baseado no banner)
+\definecolor{academicblue}{RGB}{0,51,102}
+\definecolor{lightblue}{RGB}{230,240,250}
 
+\setbeamercolor{title}{fg=academicblue}
+\setbeamercolor{frametitle}{fg=academicblue}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{academicblue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{academicblue},
+    showstringspaces=false,
+    breaklines=true
+}
+
+\title[PVQD]{Projeção Variacional da Dinâmica Quântica (PVQD)}
+\author{Lucas F. Brayner \\ Luiz Felipe Sá \\ Victor S. Dutra}
+\institute{Ciência da Computação – UNINASSAU}
+\date{2025}
+
+% -------------------------------------------------------
 \begin{document}
 
-% ---------------------------------------------------------
 \begin{frame}
-    \titlepage
+  \titlepage
 \end{frame}
 
-% ---------------------------------------------------------
+% -------------------------------------------------------
 \begin{frame}{Motivação}
-    \begin{itemize}
-        \item Simular a dinâmica de sistemas quânticos é computacionalmente caro.
-        \item O espaço de Hilbert cresce exponencialmente: $2^n$ estados para $n$ qubits.
-        \item Métodos variacionais permitem simular a evolução temporal em hardware NISQ.
-        \item O PVQD surge como proposta eficiente e estável para evoluções dependentes do tempo.
-    \end{itemize}
+  \begin{itemize}
+    \item Simular a evolução temporal de sistemas quânticos é computacionalmente caro.
+    \item Trotterização exige circuitos profundos → difícil para hardware NISQ.
+    \item O PVQD evita decompor $e^{-iHt}$ e usa otimização variacional.
+    \item Ótimo para sistemas pequenos, como o modelo de Ising.
+  \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Ideia Central do PVQD}
-    \begin{itemize}
-        \item Aproximar a evolução da Equação de Schrödinger projetando-a sobre um espaço variacional.
-        \item Utiliza um ansatz parametrizado $ \ket{\psi(\theta(t))} $.
-        \item A dinâmica é obtida ponto a ponto, ajustando $\theta(t)$.
-        \item Mais estável que VQS tradicional.
-    \end{itemize}
-\end{frame}
-
-% ---------------------------------------------------------
-\begin{frame}{Equação de Schrödinger}
+% -------------------------------------------------------
+\begin{frame}{O que é o PVQD?}
+  \begin{itemize}
+    \item Método híbrido quântico–clássico.
+    \item Aproxima a dinâmica pela projeção da equação de Schrödinger:
     \[
-        i \frac{d}{dt} \ket{\psi(t)} = H \ket{\psi(t)}
+      i \frac{d}{dt}|\psi(t)\rangle = H|\psi(t)\rangle.
     \]
-    \vspace{1em}
-    \begin{itemize}
-        \item Objetivo: aproximar a evolução sem calcular todo o vetor de estado.
-        \item O PVQD transforma esse problema em equações diferenciais nos parâmetros do circuito.
-    \end{itemize}
-\end{frame}
-
-% ---------------------------------------------------------
-\begin{frame}{Ansatz Variacional}
-    \begin{itemize}
-        \item Ansatz: circuito quântico parametrizado.
-        \item Define o subespaço acessível ao método.
-        \item Exemplos:
-        \begin{itemize}
-            \item Hardware-Efficient Ansatz
-            \item Ansatz inspirado no Hamiltoniano (QAOA-like)
-        \end{itemize}
-        \item Limitação: O método só evolui dentro do espaço gerado pelo ansatz.
-    \end{itemize}
-\end{frame}
-
-% ---------------------------------------------------------
-\begin{frame}{Projeção Variacional}
-    \begin{itemize}
-        \item O PVQD projeta $ \dot{\ket{\psi}} $ no espaço tangente do ansatz.
-        \item Leva ao sistema linear:
-    \end{itemize}
+    \item O estado é restrito a um ansatz parametrizado:
     \[
-        M(\theta) \, \dot{\theta} = V(\theta)
+      |\psi(\theta(t))\rangle.
     \]
-    \begin{itemize}
-        \item $M$: matriz de métricas (overlaps de derivadas do estado).
-        \item $V$: termo que incorpora o Hamiltoniano.
-        \item Resolver esse sistema fornece $\dot{\theta}$.
-    \end{itemize}
+    \item A evolução é obtida ajustando $\dot{\theta}$ em cada passo.
+  \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Passo Temporal (Time-Stepping)}
-    \begin{enumerate}
-        \item Calcular $M(\theta)$ e $V(\theta)$ usando medidas quânticas.
-        \item Resolver a equação linear para $\dot{\theta}$.
-        \item Atualizar:  
-        \[
-            \theta_{t+\Delta t} = \theta_t + \dot{\theta}\Delta t
-        \]
-        \item Aplicar o circuito com novos parâmetros e repetir.
-    \end{enumerate}
+% -------------------------------------------------------
+\begin{frame}{Equação Variacional}
+\[
+  \min_{\dot{\bm{\theta}}}
+  \Big\|
+    \frac{d}{dt}|\psi(\bm{\theta})\rangle
+    - H|\psi(\bm{\theta})\rangle
+  \Big\|^2
+\]
+\begin{itemize}
+  \item Isso gera um sistema linear:
+  \[
+    M \cdot \dot{\bm{\theta}} = V,
+  \]
+  onde $M$ é a matriz variacional e $V$ é o vetor de forças.
+  \item Resolver este sistema fornece os incrementos dos parâmetros.
+\end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Exemplo de Hamiltoniano: Modelo de Ising}
-    \[
-        H = J\sum_i Z_i Z_{i+1} + h_x \sum_i X_i
-    \]
-    \begin{itemize}
-        \item Hamiltoniano comum para testes.
-        \item Mas o PVQD funciona com qualquer Hamiltoniano dependente ou não do tempo.
-    \end{itemize}
+% -------------------------------------------------------
+\begin{frame}{Fluxo geral do algoritmo PVQD}
+\begin{enumerate}
+    \item Definir Hamiltoniano $H$.
+    \item Definir ansatz variacional $|\psi(\theta)\rangle$.
+    \item Medir $M$ e $V$.
+    \item Resolver $M\dot{\theta} = V$.
+    \item Atualizar parâmetros e avançar no tempo.
+    \item Medir observáveis (energia, correlação, fidelidade).
+\end{enumerate}
+
+\begin{center}
+\includegraphics[width=0.65\linewidth]{images/pvqd_geometry_flow.png}
+\end{center}
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Fluxo do Algoritmo PVQD}
-    \begin{enumerate}
-        \item Definir ansatz variacional.
-        \item Medir expectativas necessárias.
-        \item Resolver o sistema linear de McLachlan.
-        \item Atualizar parâmetros.
-        \item Evoluir o estado no tempo.
-    \end{enumerate}
+% -------------------------------------------------------
+\begin{frame}{Modelo de Ising estudado}
+Hamiltoniano:
+\[
+H = J \sum_i Z_i Z_{i+1} + h_x \sum_i X_i
+\]
 
-    % Espaço reservado para imagem
-    \begin{center}
-        \includegraphics[width=0.55\textwidth]{images/ansatz_layer.png}
-    \end{center}
+\begin{itemize}
+    \item Utilizamos $J = 1$, $h_x = 1$.
+    \item Sistema de 2 qubits.
+    \item Ideal para testar PVQD devido à forte correlação de spins.
+\end{itemize}
+
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Resultados Típicos}
-    \begin{itemize}
-        \item Fidelidade entre evolução variacional e exata.
-        \item Energia ao longo do tempo.
-        \item Erro acumulado pequeno para $\Delta t$ moderado.
-    \end{itemize}
+% -------------------------------------------------------
+\begin{frame}{Ansatz utilizado}
+\begin{itemize}
+  \item Duas camadas com rotações locais + acoplamento $ZZ(\theta)$.
+  \item Poucos parâmetros (8 no total).
+\end{itemize}
 
-    \begin{center}
-        \includegraphics[width=0.55\textwidth]{images/ansatz_layer.png}
-    \end{center}
+\begin{center}
+\includegraphics[width=0.55\linewidth]{images/ansatz_layer.png}
+\end{center}
+
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Vantagens}
-    \begin{itemize}
-        \item Requer profundidade menor que Trotterização.
-        \item Mais estável que VQS tradicional.
-        \item Pode ser executado em hardware NISQ.
-        \item Escalabilidade moderada.
-    \end{itemize}
+% -------------------------------------------------------
+\begin{frame}[fragile]{Código-base da simulação}
+
+\begin{lstlisting}
+config = PVQDConfig()
+h = create_ising_hamiltonian(config)
+ans = create_ansatz(config)
+solver = PVQDSolver(config)
+
+result = solver.solve(
+    hamiltonian=h,
+    aux_operators=[h]
+)
+
+ResultsProcessor(solver.estimator)\
+    .display_results(result, h)
+\end{lstlisting}
+
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Limitações}
-    \begin{itemize}
-        \item Dependência forte da escolha do ansatz.
-        \item Muitas medições para calcular $M$ e $V$.
-        \item Possíveis barren plateaus.
-        \item Erro cresce em longas evoluções temporais.
-    \end{itemize}
+% -------------------------------------------------------
+\begin{frame}{Parâmetros da simulação}
+\begin{itemize}
+  \item Qubits: 2
+  \item Passos de tempo: 10
+  \item Tempo total: $T = 1.0$
+  \item Parâmetros do ansatz: 8
+  \item Otimizador: 20 iterações por passo
+\end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Aplicações}
-    \begin{itemize}
-        \item Dinâmica de cadeias de spin.
-        \item Materiais quânticos.
-        \item Reações químicas.
-        \item Simulação fora do equilíbrio.
-    \end{itemize}
+% -------------------------------------------------------
+\begin{frame}{Resultado: Fidelidade}
+\begin{center}
+\begin{tabular}{c c}
+\hline
+$t$ & Fidelidade \\
+\hline
+0.0 & 1.0000 \\
+0.5 & 0.9990 \\
+1.0 & 0.9980 \\
+\hline
+\end{tabular}
+
+\vspace{0.3cm}
+
+Alta fidelidade $\Rightarrow$ trajetória temporal bem aproximada.
+\end{center}
 \end{frame}
 
-% ---------------------------------------------------------
-\begin{frame}{Conclusão}
-    \begin{itemize}
-        \item PVQD é um método promissor para simulação temporal quântica.
-        \item Combina técnicas variacionais com projeção da dinâmica exata.
-        \item Adequado para hardware NISQ.
-    \end{itemize}
+% -------------------------------------------------------
+\begin{frame}{Resultado: Energia e correlação}
+\begin{center}
+\begin{tabular}{c c c}
+\hline
+$t$ & $\langle H\rangle$ & $\langle ZZ\rangle$ \\
+\hline
+0.0 & 0.500000 & 1.000000 \\
+0.5 & 0.503872 & 0.999598 \\
+1.0 & 0.507375 & 0.998441 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item Energia suave → dinâmica consistente.
+  \item Correlação próxima de 1 → forte alinhamento de spins.
+\end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------
+% -------------------------------------------------------
+\begin{frame}{Conclusões}
+\begin{itemize}
+  \item O PVQD aproximou bem a evolução dinâmica do modelo de Ising.
+  \item Ansätze rasos podem atingir fidelidades altas.
+  \item Método promissor para simulações no regime NISQ.
+  \item Evita circuitos longos baseados em Trotterização.
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------------
 \begin{frame}{Referências}
-    \footnotesize{
-    Barison, S., Vicentini, F., \& Carleo, G. (2021). *Projected Variational Quantum Dynamics*. \\
-    McLachlan, A. D. (1964). *A variational solution of the time-dependent Schrödinger equation*. \\
-    Qiskit Textbook — Simulation Methods.
-    }
+{\footnotesize
+1. Qiskit PVQD Tutorial.  
+2. Barison, Vicentini, Carleo (2021) – Quantum Journal.  
+3. IBM Quantum PVQD API Documentation.  
+4. Barison et al., arXiv:2101.04579.
+}
 \end{frame}
 
-% ---------------------------------------------------------
+% -------------------------------------------------------
 \end{document}
