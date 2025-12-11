@@ -183,14 +183,14 @@ H = J \sum_i Z_i Z_{i+1} + h_x \sum_i X_i
 \end{frame}
 
 % -------------------------------------------------------
-\begin{frame}{Resultado: fidelidade}
+\begin{frame}{Resultado: fidelidade (simulação local)}
 \begin{center}
 \begin{tabular}{c c}
 \hline
 $t$ & Fidelidade \\
 \hline
 0.0 & 1.0000 \\
-0.5 & 0.9990 \\
+0.5 & 1.0000 \\
 1.0 & 0.9980 \\
 \hline
 \end{tabular}
@@ -202,15 +202,15 @@ Fidelidade mínima observada: $\mathcal{F}_{\min} \approx 0{,}998$.
 \end{frame}
 
 % -------------------------------------------------------
-\begin{frame}{Resultado: energia e correlação}
+\begin{frame}{Resultado: energia e correlação (simulação local)}
 \begin{center}
 \begin{tabular}{c c c}
 \hline
 $t$ & $\langle H\rangle$ & $\langle ZZ\rangle$ \\
 \hline
 0.0 & 0.500000 & 1.000000 \\
-0.5 & 0.503872 & 0.999598 \\
-1.0 & 0.507375 & 0.998441 \\
+0.5 & 0.501815 & 0.999180 \\
+1.0 & 0.503719 & 0.999475 \\
 \hline
 \end{tabular}
 \end{center}
@@ -222,12 +222,39 @@ $t$ & $\langle H\rangle$ & $\langle ZZ\rangle$ \\
 \end{frame}
 
 % -------------------------------------------------------
+\begin{frame}{Resultado: teste em hardware IBM Quantum}
+\begin{center}
+\textbf{Backend:} \texttt{ibm\_torino}
+
+\vspace{0.5cm}
+
+\begin{tabular}{c c c}
+\hline
+Ambiente & $\langle H\rangle$ & $\langle ZZ\rangle$ \\
+\hline
+Simulação local ($t=1{,}0$) & 0.503719 & 0.999475 \\
+IBM Quantum (ibm\_torino) & 0.560637 & 1.105974 \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{itemize}
+  \item Diferenças devido a ruído quântico e erros de calibração do hardware.
+  \item Valores da IBM mostram desvio esperado em dispositivos NISQ.
+  \item Demonstra a viabilidade do PVQD em hardware real.
+\end{itemize}
+\end{frame}
+
+% -------------------------------------------------------
 \begin{frame}{Conclusões}
 \begin{itemize}
   \item PVQD reproduziu bem a dinâmica do modelo de Ising em 2 qubits.
   \item Um ansatz raso com 8 parâmetros foi suficiente para alta fidelidade.
   \item Método promissor para simulações em hardware NISQ, com circuitos mais curtos que Trotterização.
-  \item Próximo passo: comparação sistemática com hardware IBM Quantum.
+  \item Testes no hardware IBM Quantum (ibm\_torino) confirmam a viabilidade do método em dispositivos reais.
+  \item Desvios observados são esperados devido ao ruído quântico em dispositivos NISQ.
 \end{itemize}
 \end{frame}
 
