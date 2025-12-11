@@ -1,35 +1,24 @@
 \documentclass[10pt]{beamer}
 
-% Tema limpo e profissional
 \usetheme{Madrid}
 \usecolortheme{seahorse}
 
 \usepackage{graphicx}
+\usepackage{adjustbox}
 \usepackage{amsmath}
 \usepackage{bm}
-\usepackage{listings}
 \usepackage{xcolor}
 
-% Cores personalizadas (baseado no banner)
+% Cores personalizadas
 \definecolor{academicblue}{RGB}{0,51,102}
 \definecolor{lightblue}{RGB}{230,240,250}
 
 \setbeamercolor{title}{fg=academicblue}
 \setbeamercolor{frametitle}{fg=academicblue}
 
-\lstset{
-    language=Python,
-    basicstyle=\ttfamily\footnotesize,
-    keywordstyle=\color{academicblue}\bfseries,
-    commentstyle=\color{gray}\itshape,
-    stringstyle=\color{academicblue},
-    showstringspaces=false,
-    breaklines=true
-}
-
 \title[PVQD]{Projeção Variacional da Dinâmica Quântica (PVQD)}
 \author{Lucas F. Brayner \\ Luiz Felipe Sá \\ Victor S. Dutra}
-\institute{Ciência da Computação – UNINASSAU}
+\institute{Ciência da Computação -- UNINASSAU}
 \date{2025}
 
 % -------------------------------------------------------
@@ -43,56 +32,57 @@
 \begin{frame}{Motivação}
   \begin{itemize}
     \item Simular a evolução temporal de sistemas quânticos é computacionalmente caro.
-    \item Trotterização exige circuitos profundos → difícil para hardware NISQ.
+    \item Trotterização exige circuitos profundos $\rightarrow$ difícil para hardware NISQ.
     \item O PVQD evita decompor $e^{-iHt}$ e usa otimização variacional.
-    \item Ótimo para sistemas pequenos, como o modelo de Ising.
+    \item Bom cenário de teste: modelo de Ising com poucos qubits.
   \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------
 \begin{frame}{O que é o PVQD?}
   \begin{itemize}
-    \item Método híbrido quântico–clássico.
-    \item Aproxima a dinâmica pela projeção da equação de Schrödinger:
+    \item Método híbrido quântico--clássico.
+    \item Aproxima a dinâmica pela equação de Schrödinger:
     \[
-      i \frac{d}{dt}|\psi(t)\rangle = H|\psi(t)\rangle.
+      i \frac{d}{dt}\lvert \psi(t)\rangle = H \lvert \psi(t)\rangle .
     \]
-    \item O estado é restrito a um ansatz parametrizado:
+    \item Restringimos o estado a um ansatz parametrizado:
     \[
-      |\psi(\theta(t))\rangle.
+      \lvert \psi(\boldsymbol{\theta}(t))\rangle.
     \]
-    \item A evolução é obtida ajustando $\dot{\theta}$ em cada passo.
+    \item A evolução é obtida atualizando os parâmetros em cada passo de tempo.
   \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------
-\begin{frame}{Equação Variacional}
+\begin{frame}{Equação variacional do PVQD}
 \[
-  \min_{\dot{\bm{\theta}}}
-  \Big\|
-    \frac{d}{dt}|\psi(\bm{\theta})\rangle
-    - H|\psi(\bm{\theta})\rangle
-  \Big\|^2
+  \min_{\dot{\boldsymbol{\theta}}}
+  \left\|
+    \frac{d}{dt} \lvert \psi(\boldsymbol{\theta})\rangle
+    - H \lvert \psi(\boldsymbol{\theta})\rangle
+  \right\|^2
 \]
+
 \begin{itemize}
-  \item Isso gera um sistema linear:
-  \[
-    M \cdot \dot{\bm{\theta}} = V,
-  \]
-  onde $M$ é a matriz variacional e $V$ é o vetor de forças.
-  \item Resolver este sistema fornece os incrementos dos parâmetros.
+  \item Isso leva a um sistema linear:
+    \[
+      M \, \dot{\boldsymbol{\theta}} = V,
+    \]
+    onde $M$ é a matriz variacional e $V$ o vetor de forças.
+  \item O algoritmo resolve esse sistema a cada passo para atualizar os parâmetros.
 \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------
 \begin{frame}{Fluxo geral do algoritmo PVQD}
 \begin{enumerate}
-    \item Definir Hamiltoniano $H$.
-    \item Definir ansatz variacional $|\psi(\theta)\rangle$.
-    \item Medir $M$ e $V$.
-    \item Resolver $M\dot{\theta} = V$.
+    \item Definir Hamiltoniano $H$ (modelo físico).
+    \item Escolher ansatz variacional $\lvert \psi(\boldsymbol{\theta})\rangle$.
+    \item Medir grandezas necessárias para $M$ e $V$.
+    \item Resolver $M \dot{\boldsymbol{\theta}} = V$.
     \item Atualizar parâmetros e avançar no tempo.
-    \item Medir observáveis (energia, correlação, fidelidade).
+    \item Medir observáveis: energia, correlação, fidelidade.
 \end{enumerate}
 
 \begin{center}
@@ -108,44 +98,77 @@ H = J \sum_i Z_i Z_{i+1} + h_x \sum_i X_i
 \]
 
 \begin{itemize}
-    \item Utilizamos $J = 1$, $h_x = 1$.
-    \item Sistema de 2 qubits.
-    \item Ideal para testar PVQD devido à forte correlação de spins.
+    \item Parâmetros escolhidos: $J = 0{,}5$ e $h_x = 0{,}1$ (configuração padrão).
+    \item Sistema de 2 qubits, com acoplamentos $ZZ$ e campo transversal em $X$.
+    \item Simulação em modo \emph{statevector} usando Qiskit.
 \end{itemize}
-
 \end{frame}
 
 % -------------------------------------------------------
 \begin{frame}{Ansatz utilizado}
 \begin{itemize}
-  \item Duas camadas com rotações locais + acoplamento $ZZ(\theta)$.
-  \item Poucos parâmetros (8 no total).
+  \item Circuito do tipo \texttt{EfficientSU2} com:
+    \begin{itemize}
+      \item Rotações locais em cada qubit.
+      \item Camada de emaranhamento linear.
+      \item Apenas 1 repetição (reps = 1).
+    \end{itemize}
+  \item Total de 8 parâmetros para 2 qubits.
 \end{itemize}
 
 \begin{center}
 \includegraphics[width=0.55\linewidth]{images/ansatz_layer.png}
 \end{center}
-
 \end{frame}
 
 % -------------------------------------------------------
-\begin{frame}[fragile]{Código-base da simulação}
+% ARQUITETURA + PRINTS DE CÓDIGO
+% -------------------------------------------------------
 
-\begin{lstlisting}
-config = PVQDConfig()
-h = create_ising_hamiltonian(config)
-ans = create_ansatz(config)
-solver = PVQDSolver(config)
+\begin{frame}{Arquitetura do código PVQD}
+  \begin{itemize}
+    \item \textbf{config.py}: define parâmetros físicos e numéricos da simulação.
+    \item \textbf{hamiltonian.py}: constrói o Hamiltoniano de Ising e o observável $ZZ$.
+    \item \textbf{circuit.py}: cria o ansatz variacional (\texttt{EfficientSU2}).
+    \item \textbf{pvqd\_solver.py}: configura o algoritmo PVQD da Qiskit.
+    \item \textbf{results.py}: imprime tempos, fidelidades, energia e correlações.
+  \end{itemize}
+\end{frame}
 
-result = solver.solve(
-    hamiltonian=h,
-    aux_operators=[h]
-)
+\begin{frame}{Parâmetros da simulação: \texttt{config.py}}
+  \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.85\textheight,center}{\includegraphics{images/config.png}}
+  \end{center}
+\end{frame}
 
-ResultsProcessor(solver.estimator)\
-    .display_results(result, h)
-\end{lstlisting}
+\begin{frame}{Modelo físico: \texttt{hamiltonian.py}}
+  \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.85\textheight,center}{\includegraphics{images/hamiltonian.png}}
+  \end{center}
+\end{frame}
 
+\begin{frame}{Ansatz variacional: \texttt{circuit.py}}
+  \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.85\textheight,center}{\includegraphics{images/circuit.png}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Algoritmo PVQD: \texttt{pvqd\_solver.py}}
+  \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.85\textheight,center}{\includegraphics{images/pvqd_solver.png}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Pós-processamento: \texttt{results.py}}
+  \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.85\textheight,center}{\includegraphics{images/results.png}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Fluxo principal: \texttt{main.py}}
+  \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.85\textheight,center}{\includegraphics{images/main.png}}
+  \end{center}
 \end{frame}
 
 % -------------------------------------------------------
@@ -153,14 +176,14 @@ ResultsProcessor(solver.estimator)\
 \begin{itemize}
   \item Qubits: 2
   \item Passos de tempo: 10
-  \item Tempo total: $T = 1.0$
+  \item Tempo total: $T = 1{,}0$
   \item Parâmetros do ansatz: 8
-  \item Otimizador: 20 iterações por passo
+  \item Otimizador clássico: até 20 avaliações por passo (\texttt{L\_BFGS\_B})
 \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------
-\begin{frame}{Resultado: Fidelidade}
+\begin{frame}{Resultado: fidelidade}
 \begin{center}
 \begin{tabular}{c c}
 \hline
@@ -174,12 +197,12 @@ $t$ & Fidelidade \\
 
 \vspace{0.3cm}
 
-Alta fidelidade $\Rightarrow$ trajetória temporal bem aproximada.
+Fidelidade mínima observada: $\mathcal{F}_{\min} \approx 0{,}998$.
 \end{center}
 \end{frame}
 
 % -------------------------------------------------------
-\begin{frame}{Resultado: Energia e correlação}
+\begin{frame}{Resultado: energia e correlação}
 \begin{center}
 \begin{tabular}{c c c}
 \hline
@@ -193,28 +216,28 @@ $t$ & $\langle H\rangle$ & $\langle ZZ\rangle$ \\
 \end{center}
 
 \begin{itemize}
-  \item Energia suave → dinâmica consistente.
-  \item Correlação próxima de 1 → forte alinhamento de spins.
+  \item Energia varia suavemente ao longo do tempo.
+  \item Correlação $\langle ZZ\rangle$ próxima de 1 indica forte correlação de spins.
 \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------
 \begin{frame}{Conclusões}
 \begin{itemize}
-  \item O PVQD aproximou bem a evolução dinâmica do modelo de Ising.
-  \item Ansätze rasos podem atingir fidelidades altas.
-  \item Método promissor para simulações no regime NISQ.
-  \item Evita circuitos longos baseados em Trotterização.
+  \item PVQD reproduziu bem a dinâmica do modelo de Ising em 2 qubits.
+  \item Um ansatz raso com 8 parâmetros foi suficiente para alta fidelidade.
+  \item Método promissor para simulações em hardware NISQ, com circuitos mais curtos que Trotterização.
+  \item Próximo passo: comparação sistemática com hardware IBM Quantum.
 \end{itemize}
 \end{frame}
 
 % -------------------------------------------------------
 \begin{frame}{Referências}
 {\footnotesize
-1. Qiskit PVQD Tutorial.  
-2. Barison, Vicentini, Carleo (2021) – Quantum Journal.  
-3. IBM Quantum PVQD API Documentation.  
-4. Barison et al., arXiv:2101.04579.
+1. Qiskit Algorithms. \emph{Projected Variational Quantum Dynamics Tutorial}. \\
+2. Barison, S.; Vicentini, F.; Carleo, G. \emph{An efficient quantum algorithm for the time evolution of parameterized circuits}. Quantum 5, 512 (2021). \\
+3. IBM Quantum. \emph{PVQD API Documentation}. \\
+4. Barison, S.; Vicentini, F.; Carleo, G. arXiv:2101.04579 (2021).
 }
 \end{frame}
 
