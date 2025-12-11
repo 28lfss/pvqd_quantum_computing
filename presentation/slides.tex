@@ -16,10 +16,13 @@
 \setbeamercolor{title}{fg=academicblue}
 \setbeamercolor{frametitle}{fg=academicblue}
 
+% Remove símbolos de navegação
+\setbeamertemplate{navigation symbols}{}
+
 \title[PVQD]{Projeção Variacional da Dinâmica Quântica (PVQD)}
-\author{Lucas F. Brayner \\ Luiz Felipe Sá \\ Victor S. Dutra}
-\institute{Ciência da Computação -- UNINASSAU}
-\date{2025}
+\author{Lucas Fernandes Brayner \\ Luiz Felipe Sá \\ Victor Silva Dutra}
+\institute{Ciência da Computação 8NA -- UNINASSAU}
+\date{12/2025}
 
 % -------------------------------------------------------
 \begin{document}
@@ -172,6 +175,22 @@ H = J \sum_i Z_i Z_{i+1} + h_x \sum_i X_i
 \end{frame}
 
 % -------------------------------------------------------
+\begin{frame}{Circuito final executado no hardware IBM}
+    \begin{itemize}
+        \item O PVQD produz um ansatz parametrizado; o transpiler da IBM converte esse ansatz em um circuito compatível com o hardware.
+        \item O circuito abaixo representa a camada final realmente executada no backend \texttt{ibm\_torino}.
+        \item Observa-se o padrão característico: portas \texttt{SX}, rotações \texttt{RZ} com parâmetros otimizados e uma porta \texttt{CZ} representando o acoplamento do modelo de Ising.
+    \end{itemize}
+    
+    \begin{center}
+    \adjustbox{max width=0.95\linewidth,max height=0.75\textheight,center}{
+    \includegraphics{images/ibm_platform.png}
+    }
+    \end{center}
+\end{frame}
+    
+
+% -------------------------------------------------------
 \begin{frame}{Parâmetros da simulação}
 \begin{itemize}
   \item Qubits: 2
@@ -260,12 +279,26 @@ IBM Quantum (ibm\_torino) & 0.560637 & 1.105974 \\
 
 % -------------------------------------------------------
 \begin{frame}{Referências}
-{\footnotesize
-1. Qiskit Algorithms. \emph{Projected Variational Quantum Dynamics Tutorial}. \\
-2. Barison, S.; Vicentini, F.; Carleo, G. \emph{An efficient quantum algorithm for the time evolution of parameterized circuits}. Quantum 5, 512 (2021). \\
-3. IBM Quantum. \emph{PVQD API Documentation}. \\
-4. Barison, S.; Vicentini, F.; Carleo, G. arXiv:2101.04579 (2021).
-}
+\begin{thebibliography}{9}
+\setbeamertemplate{bibliography item}[text]
+
+\bibitem{barison2021}
+Barison, S.; Vicentini, F.; Carleo, G.
+\newblock \emph{An efficient quantum algorithm for the time evolution of parameterized circuits}.
+\newblock Quantum \textbf{5}, 512 (2021).
+\newblock arXiv:2101.04579 (2021).
+
+\bibitem{qiskit_pvqd}
+Qiskit Algorithms.
+\newblock \emph{Projected Variational Quantum Dynamics Tutorial}.
+\newblock Disponível em: \texttt{qiskit.org/documentation/}
+
+\bibitem{ibm_quantum}
+IBM Quantum.
+\newblock \emph{PVQD API Documentation}.
+\newblock Disponível em: \texttt{quantum-computing.ibm.com}
+
+\end{thebibliography}
 \end{frame}
 
 % -------------------------------------------------------
