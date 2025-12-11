@@ -121,7 +121,7 @@ config = PVQDConfig(
 
 # Build Hamiltonian and observables
 hamiltonian = create_ising_hamiltonian(config)
-zz_observable = create_zz_observable()
+zz_observable = create_zz_observable(config)
 
 # Create solver and run
 solver = PVQDSolver(config)
@@ -183,13 +183,23 @@ Main solver class for PVQD time evolution.
 
 ### create_ising_hamiltonian
 
-Creates a 2-qubit Ising Hamiltonian: H = J*ZZ + h_x*(IX + XI)
+Creates an N-qubit 1D Ising Hamiltonian: H = J * sum_{i} Z_i Z_{i+1} + h_x * sum_{i} X_i
 
 **Parameters:**
 - `config` (PVQDConfig): Configuration with interaction_strength and transverse_field
 
 **Returns:**
 - `SparsePauliOp`: Ising Hamiltonian operator
+
+### create_zz_observable
+
+Creates a ZZ observable operator: O_ZZ = sum_i Z_i Z_{i+1}
+
+**Parameters:**
+- `config` (PVQDConfig): Configuration with num_qubits
+
+**Returns:**
+- `SparsePauliOp`: ZZ observable operator
 
 ### create_ansatz
 
@@ -200,6 +210,16 @@ Creates a variational ansatz circuit using Qiskit's EfficientSU2.
 
 **Returns:**
 - `QuantumCircuit`: Parameterized ansatz circuit
+
+### get_initial_parameters
+
+Returns zero-initialized parameters for the ansatz circuit.
+
+**Parameters:**
+- `ansatz` (QuantumCircuit): The ansatz circuit
+
+**Returns:**
+- `np.ndarray`: Array of zeros with length matching the number of parameters in the ansatz
 
 ### ResultsProcessor
 
@@ -243,8 +263,13 @@ config = PVQDConfig(
 
 ### IBM Quantum Evaluation
 
-To enable IBM Quantum hardware evaluation, uncomment the relevant section in `main.py`:
+IBM Quantum hardware evaluation is enabled by default in `main.py`. To use this feature:
 
+1. Ensure you have set `IBM_API_KEY` in your `.env` file
+2. The code will automatically attempt to run on IBM Quantum hardware
+3. If the API key is missing or there's an error, the evaluation will be skipped gracefully
+
+The IBM evaluation section in `main.py`:
 ```python
 from ibm_backend import run_ibm_evaluation
 
@@ -254,8 +279,6 @@ ibm_result = run_ibm_evaluation(
     zz_observable=zz_observable
 )
 ```
-
-Ensure you have set `IBM_API_KEY` in your `.env` file.
 
 ## Requirements
 
@@ -277,7 +300,7 @@ The project includes optional support for running evaluations on IBM Quantum har
    ```
    IBM_API_KEY=your_api_key_here
    ```
-3. Uncomment the IBM evaluation section in `main.py`
+3. The IBM evaluation section is enabled by default in `main.py` (no need to uncomment)
 
 The IBM backend integration will:
 - Automatically select the least busy available backend
