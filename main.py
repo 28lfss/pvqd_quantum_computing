@@ -3,11 +3,10 @@ from hamiltonian import create_ising_hamiltonian, create_zz_observable
 from circuit import create_ansatz
 from pvqd_solver import PVQDSolver
 from results import ResultsProcessor
-# Optional: Uncomment to enable IBM backend integration
-# from ibm_backend import run_ibm_evaluation
+# Optional: IBM backend integration
+from ibm_backend import run_ibm_evaluation
 
 def main():
-    """Run the PVQD demo."""
     config = PVQDConfig()
     print("PVQD: local statevector demo")
     print(
@@ -22,7 +21,7 @@ def main():
     print(f"Ansatz: {ansatz.num_parameters} parameters on {ansatz.num_qubits} qubits")
 
     solver = PVQDSolver(config)
-    print("Running PVQD...")
+    print("Running PVQD:")
     result = solver.solve(
         hamiltonian=hamiltonian,
         aux_operators=[hamiltonian, zz_observable],
@@ -30,8 +29,7 @@ def main():
     results_processor = ResultsProcessor(solver.estimator)
     results_processor.display_results(result, hamiltonian, zz_observable)
 
-    # OPTIONAL: enable IBM backend for a single final evaluation
-    """
+    # OPTIONAL: IBM backend (require API key)
     print("IBM backend evaluation")
     ibm_result = run_ibm_evaluation(
         evolved_state=result.evolved_state,
@@ -40,7 +38,6 @@ def main():
     )
     if ibm_result is None:
         print("Skipping IBM comparison (no backend or error).")
-    """
 
 if __name__ == "__main__":
     main()
